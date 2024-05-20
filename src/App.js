@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.css";
+import React, { useState } from "react";
+import NavigationBar from "./MainPage/NavigationBar";
+import Main from "./MainPage/Main";
+import styled from "styled-components";
+const Appcomponent = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
 function App() {
+  const [showDetail, setShowDetail] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Appcomponent>
+      <NavigationBar
+        setShowDetail={setShowDetail}
+        setShowProfile={setShowProfile}
+      />
+      <Main
+        showDetail={showDetail}
+        setShowDetail={setShowDetail}
+        showProfile={showProfile}
+        setShowProfile={setShowProfile}
+      />
+    </Appcomponent>
   );
 }
 
