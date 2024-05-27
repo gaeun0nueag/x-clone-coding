@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
 import styled, { css } from "styled-components";
 import PostDetail from "./PostDetail";
 import { TbSettings } from "react-icons/tb";
@@ -259,7 +261,42 @@ const ShareIcon = styled(MdOutlineIosShare)`
   padding-right: 20px;
   padding-left: 20px;
 `;
+
 const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
+  const [tweets, setTweets] = useState([]);
+  const [newTweet, setNewTweet] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("https://api.x-clone-coding.p-e.kr/tweets")
+      .then((response) => {
+        const sortedTweets = response.data.tweets.sort(
+          (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+        );
+        setTweets(sortedTweets);
+      })
+      .catch((error) => {
+        console.error("Error fetching the tweets", error);
+      });
+  }, []);
+
+  const handlePostTweet = () => {
+    const tweetData = {
+      memberId: 1,
+      content: newTweet,
+    };
+    axios
+      .post("https://api.x-clone-coding.p-e.kr/tweets", tweetData)
+      .then((response) => {
+        console.log("New tweet added:", response.data);
+        setTweets([response.data, ...tweets]);
+        setNewTweet("");
+      })
+      .catch((error) => {
+        console.error("Error posting the tweet", error);
+      });
+  };
+
   if (showProfile) {
     return (
       <ProfileMain
@@ -269,7 +306,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
     );
   }
   if (showDetail) {
-    return <PostDetail setShowDetail={setShowDetail} />;
+    return <PostDetail setShowDetail={setShowDetail} tweetId={showDetail} />;
   }
 
   return (
@@ -288,46 +325,54 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
           alt="usericon"
         />
         <InputTextField>
-          <InputText placeholder="What's going on?" />
-          <PostBtn>Post</PostBtn>
+          <InputText
+            placeholder="What's going on?"
+            value={newTweet}
+            onChange={(e) => setNewTweet(e.target.value)}
+          />
+          <PostBtn onClick={handlePostTweet}>Post</PostBtn>
         </InputTextField>
       </InputBox>
-
-      <TwitterBox onClick={() => setShowDetail(true)}>
-        <UserIcon
-          src="https://www.tweetgen.com/c/default-pfp.png"
-          alt="usericon"
-        />
-        <NickAndPost>
-          <NickAndIDBox>
-            <Nickname>이가은</Nickname>
-            <ID>@gaeun - 8h</ID>
-            <MoreIcon />
-          </NickAndIDBox>
-          <Post>EFUB 토이 프로젝트 입니다. 화이팅!</Post>
-          <ShareBox>
-            <SocialBox>
-              <QuoteBox>
-                <QuoteIcon />
-                <QuoteNum>3.8k</QuoteNum>
-              </QuoteBox>
-              <RetweetBox>
-                <RetweetIcon /> <RetweetNum>2.5k</RetweetNum>
-              </RetweetBox>
-              <LikeBox>
-                <LikeIcon />
-                <LikeNum>20k</LikeNum>
-              </LikeBox>
-              <StatsBox>
-                <StatsIcon />
-                <StatsNum>2.5k</StatsNum>
-              </StatsBox>
-              <SaveIcon />
-            </SocialBox>
-            <ShareIcon />
-          </ShareBox>
-        </NickAndPost>
-      </TwitterBox>
+      {tweets.map((tweet) => (
+        <TwitterBox
+          key={tweet.tweetId}
+          onClick={() => setShowDetail(tweet.tweetId)}
+        >
+          <UserIcon
+            src="https://www.tweetgen.com/c/default-pfp.png"
+            alt="usericon"
+          />
+          <NickAndPost>
+            <NickAndIDBox>
+              <Nickname>{tweet.nickname}</Nickname>
+              <ID>{tweet.id}</ID>
+              <MoreIcon />
+            </NickAndIDBox>
+            <Post>{tweet.content}</Post>
+            <ShareBox>
+              <SocialBox>
+                <QuoteBox>
+                  <QuoteIcon />
+                  <QuoteNum>3.8k</QuoteNum>
+                </QuoteBox>
+                <RetweetBox>
+                  <RetweetIcon /> <RetweetNum>2.5k</RetweetNum>
+                </RetweetBox>
+                <LikeBox>
+                  <LikeIcon />
+                  <LikeNum>20k</LikeNum>
+                </LikeBox>
+                <StatsBox>
+                  <StatsIcon />
+                  <StatsNum>2.5k</StatsNum>
+                </StatsBox>
+                <SaveIcon />
+              </SocialBox>
+              <ShareIcon />
+            </ShareBox>
+          </NickAndPost>
+        </TwitterBox>
+      ))}
     </MainComponent>
   );
 };

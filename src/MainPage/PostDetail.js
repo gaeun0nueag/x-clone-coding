@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import Main from "./Main";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { SlBubble } from "react-icons/sl";
@@ -195,7 +196,24 @@ const ShareIcon = styled(MdOutlineIosShare)`
   padding-right: 20px;
   padding-left: 20px;
 `;
-const PostDetail = ({ setShowDetail }) => {
+const PostDetail = ({ setShowDetail, tweetId }) => {
+  const [tweet, setTweet] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}`)
+      .then((response) => {
+        setTweet(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching the tweet", error);
+      });
+  }, [tweetId]);
+
+  if (!tweet) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <PostDetailWrapper>
@@ -211,16 +229,16 @@ const PostDetail = ({ setShowDetail }) => {
             alt="usericon"
           />
           <UserInfoBox>
-            <Nickname>이가은</Nickname>
-            <ID>@gaeun</ID>
+            <Nickname>{tweet.nickname}</Nickname>
+            <ID>{tweet.id}</ID>
           </UserInfoBox>
           <BottomMoreIcon />
         </UserBox>
         <PostBox>
-          <PostText>안녕</PostText>
+          <PostText>{tweet.content}</PostText>
           <Translatetext>Translatetext post</Translatetext>
         </PostBox>
-        <TimeBox>12:16 PM - May 20, 2024</TimeBox>
+        <TimeBox>{new Date(tweet.createdDate).toLocaleString()}</TimeBox>
         <SocialBox>
           <QuoteBox>
             <QuoteIcon />

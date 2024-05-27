@@ -7,6 +7,11 @@ import { PiBellBold } from "react-icons/pi";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiSlashCommands2 } from "react-icons/ri";
 import { IoIosMore } from "react-icons/io";
+import { RiFileListLine } from "react-icons/ri";
+import { IoBookmarkOutline } from "react-icons/io5";
+import { IoPeopleOutline } from "react-icons/io5";
+import { BsPerson } from "react-icons/bs";
+import { CgMoreO } from "react-icons/cg";
 
 const MainComponent = styled.div`
   display: flex;
@@ -129,7 +134,7 @@ const Lists = styled.div`
   margin-bottom: 30px;
 `;
 
-const ListsIcon = styled(RiSlashCommands2)`
+const ListsIcon = styled(RiFileListLine)`
   color: white;
   font-size: 25px;
   margin-right: 10px;
@@ -148,7 +153,7 @@ const Bookmarks = styled.div`
   margin-bottom: 30px;
 `;
 
-const BookmarksIcon = styled(RiSlashCommands2)`
+const BookmarksIcon = styled(IoBookmarkOutline)`
   color: white;
   font-size: 25px;
   margin-right: 10px;
@@ -166,7 +171,7 @@ const Communities = styled.div`
   margin-bottom: 30px;
 `;
 
-const CommunitiesIcon = styled(RiSlashCommands2)`
+const CommunitiesIcon = styled(IoPeopleOutline)`
   color: white;
   font-size: 25px;
   margin-right: 10px;
@@ -185,7 +190,7 @@ const Premium = styled.div`
   margin-bottom: 30px;
 `;
 
-const PremiumIcon = styled(RiSlashCommands2)`
+const PremiumIcon = styled(PiXLogo)`
   color: white;
   font-size: 25px;
   margin-right: 10px;
@@ -208,7 +213,7 @@ const Profile = styled.button`
   padding-left: 0px;
 `;
 
-const ProfileIcon = styled(RiSlashCommands2)`
+const ProfileIcon = styled(BsPerson)`
   color: white;
   font-size: 25px;
   margin-right: 10px;
@@ -227,7 +232,7 @@ const More = styled.div`
   margin-bottom: 30px;
 `;
 
-const MoreIcon = styled(RiSlashCommands2)`
+const MoreIcon = styled(CgMoreO)`
   color: white;
   font-size: 25px;
   margin-right: 10px;

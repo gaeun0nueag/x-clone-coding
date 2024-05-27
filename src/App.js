@@ -1,8 +1,9 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavigationBar from "./MainPage/NavigationBar";
 import Main from "./MainPage/Main";
 import styled from "styled-components";
+
 const Appcomponent = styled.div`
   display: flex;
   flex-direction: row;
@@ -10,6 +11,7 @@ const Appcomponent = styled.div`
 function App() {
   const [showDetail, setShowDetail] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+
   return (
     <Appcomponent>
       <NavigationBar
