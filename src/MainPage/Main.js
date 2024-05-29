@@ -22,7 +22,6 @@ const MainComponent = styled.div`
   border-top: none;
   border-bottom: none;
   margin-bottom: 0;
-  height: 100vh;
 `;
 
 const Topbox = styled.div`
@@ -127,7 +126,6 @@ const TwitterBox = styled.button`
   justify-content: start;
   border-top: none;
   border-left: none;
-  border-right: none;
   border-bottom: solid 1px #3a3c3f;
   cursor: pointer;
 `;
@@ -319,6 +317,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
       <ProfileMain
         setShowProfile={setShowProfile}
         setShowDetail={setShowDetail}
+        fetchTweets={fetchTweets}
       />
     );
   }

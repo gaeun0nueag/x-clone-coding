@@ -21,12 +21,14 @@ const ProfileMainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 45vw;
-  border: solid 1px #3a3c3f;
+
   border-top: none;
   border-bottom: none;
   margin-bottom: 0;
-  height: 100vh;
+
+  border: solid 1px #3a3c3f;
 `;
+
 const Header = styled.div`
   display: flex;
   justify-content: start;
@@ -57,7 +59,10 @@ const Nickname = styled.div`
 `;
 const BackgroundImg = styled.div`
   background-color: #343639;
-  height: 20vh;
+  padding-bottom: 20vh;
+  width: 100%;
+
+  border: solid 1px #3a3c3f;
 `;
 
 const UserBox = styled.div`
@@ -328,7 +333,7 @@ const ShareIcon = styled(MdOutlineIosShare)`
   padding-right: 20px;
   padding-left: 20px;
 `;
-const ProfileMain = ({ setShowProfile }) => {
+const ProfileMain = ({ setShowProfile, fetchTweets }) => {
   const [tweets, setTweets] = useState([]);
   const [profile, setProfile] = useState({ nickname: "", id: "" });
 
@@ -375,6 +380,7 @@ const ProfileMain = ({ setShowProfile }) => {
         setTweets((prevTweets) =>
           prevTweets.filter((tweet) => tweet.tweetId !== tweetId)
         );
+        fetchTweets();
       })
       .catch((error) => {
         if (error.response) {
