@@ -13,6 +13,7 @@ import { BiBarChart } from "react-icons/bi";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { MdOutlineIosShare } from "react-icons/md";
 import ProfileMain from "../UserProfilePage/ProfileMain";
+
 const MainComponent = styled.div`
   display: flex;
   flex-direction: column;
@@ -84,11 +85,13 @@ const InputTextField = styled.div`
   width: 100%;
 `;
 
-const InputText = styled.input`
+const InputText = styled.textarea`
   background-color: black;
   border: none;
   color: white;
   font-size: 20px;
+  border: none;
+  resize: none;
   &::placeholder {
     color: #73787d;
     background-color: black;
@@ -266,6 +269,20 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
   const [tweets, setTweets] = useState([]);
   const [newTweet, setNewTweet] = useState("");
 
+  const fetchTweets = () => {
+    axios
+      .get("https://api.x-clone-coding.p-e.kr/tweets")
+      .then((response) => {
+        setTweets(response.data.tweets.sort((a, b) => b.tweetId - a.tweetId));
+      })
+      .catch((error) => {
+        console.error("Error fetching the tweets", error);
+      });
+  };
+  useEffect(() => {
+    fetchTweets();
+  }, []);
+
   useEffect(() => {
     axios
       .get("https://api.x-clone-coding.p-e.kr/tweets")
@@ -306,7 +323,13 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
     );
   }
   if (showDetail) {
-    return <PostDetail setShowDetail={setShowDetail} tweetId={showDetail} />;
+    return (
+      <PostDetail
+        setShowDetail={setShowDetail}
+        tweetId={showDetail}
+        refreshTweets={fetchTweets}
+      />
+    );
   }
 
   return (
@@ -346,6 +369,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
             <NickAndIDBox>
               <Nickname>{tweet.nickname}</Nickname>
               <ID>{tweet.id}</ID>
+
               <MoreIcon />
             </NickAndIDBox>
             <Post>{tweet.content}</Post>

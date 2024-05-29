@@ -12,6 +12,8 @@ import { BiBarChart } from "react-icons/bi";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { MdOutlineIosShare } from "react-icons/md";
 
+import { MdDeleteForever } from "react-icons/md";
+
 const PostDetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -83,8 +85,15 @@ const ID = styled.div`
   padding-left: 10px;
 `;
 
-const BottomMoreIcon = styled(IoIosMore)`
+const DeleteIcon = styled(MdDeleteForever)`
   margin-left: auto;
+  cursor: pointer;
+  font-size: 25px;
+  color: red;
+`;
+
+const BottomMoreIcon = styled(IoIosMore)`
+  margin-left: 10px;
   margin-right: 20px;
   font-size: 25px;
   color: #73787d;
@@ -196,7 +205,7 @@ const ShareIcon = styled(MdOutlineIosShare)`
   padding-right: 20px;
   padding-left: 20px;
 `;
-const PostDetail = ({ setShowDetail, tweetId }) => {
+const PostDetail = ({ setShowDetail, tweetId, refreshTweets }) => {
   const [tweet, setTweet] = useState(null);
 
   useEffect(() => {
@@ -213,6 +222,23 @@ const PostDetail = ({ setShowDetail, tweetId }) => {
   if (!tweet) {
     return <div>Loading...</div>;
   }
+
+  const deleteTweet = () => {
+    axios
+      .delete(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}`, {
+        data: { memberId: tweet.memberId },
+      })
+      .then(() => {
+        setShowDetail(false);
+        refreshTweets();
+      })
+      .catch((error) => {
+        console.error(
+          "Error deleting the tweet",
+          error.response ? error.response.data : error.message
+        );
+      });
+  };
 
   return (
     <>
@@ -232,6 +258,12 @@ const PostDetail = ({ setShowDetail, tweetId }) => {
             <Nickname>{tweet.nickname}</Nickname>
             <ID>{tweet.id}</ID>
           </UserInfoBox>
+          <DeleteIcon
+            onClick={(e) => {
+              e.stopPropagation();
+              deleteTweet(tweet.tweetId);
+            }}
+          />
           <BottomMoreIcon />
         </UserBox>
         <PostBox>

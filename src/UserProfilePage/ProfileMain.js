@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+
+import axios from "axios";
+
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 import { SlBubble } from "react-icons/sl";
@@ -10,6 +13,9 @@ import { GoHeart } from "react-icons/go";
 import { BiBarChart } from "react-icons/bi";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { MdOutlineIosShare } from "react-icons/md";
+
+import { MdDeleteForever } from "react-icons/md";
+
 import PostDetail from "../MainPage/PostDetail";
 const ProfileMainWrapper = styled.div`
   display: flex;
@@ -210,9 +216,15 @@ const IDpost = styled.div`
   padding-left: 10px;
 `;
 
-const MoreIcon = styled(IoIosMore)`
+const DeleteIcon = styled(MdDeleteForever)`
   margin-left: auto;
 
+  font-size: 25px;
+  color: #73787d;
+  cursor: pointer;
+`;
+
+const MoreIcon = styled(IoIosMore)`
   font-size: 25px;
   color: #73787d;
 `;
@@ -317,6 +329,72 @@ const ShareIcon = styled(MdOutlineIosShare)`
   padding-left: 20px;
 `;
 const ProfileMain = ({ setShowProfile }) => {
+  const [tweets, setTweets] = useState([]);
+  const [profile, setProfile] = useState({ nickname: "", id: "" });
+
+  useEffect(() => {
+    axios
+      .get("https://api.x-clone-coding.p-e.kr/members/1/tweets")
+      .then((response) => {
+        if (response.data && response.data.memberTweetList) {
+          const sortedTweets = response.data.memberTweetList.sort(
+            (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+          );
+          setTweets(sortedTweets);
+        } else {
+          console.error("No tweets data found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching the tweets", error);
+      });
+    // 프로필 정보 가져오기
+    axios
+      .get("https://api.x-clone-coding.p-e.kr/members/1")
+      .then((response) => {
+        if (response.data) {
+          setProfile({
+            nickname: response.data.nickname,
+            id: response.data.id,
+          });
+        } else {
+          console.error("No profile data found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching the profile", error);
+      });
+  }, []);
+
+  const handleDeleteTweet = (tweetId) => {
+    axios
+
+      .delete(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}?memberId=1`)
+      .then((response) => {
+        console.log("Tweet deleted:", response.data);
+        setTweets((prevTweets) =>
+          prevTweets.filter((tweet) => tweet.tweetId !== tweetId)
+        );
+      })
+      .catch((error) => {
+        if (error.response) {
+          // 서버가 응답한 경우
+          console.error(
+            "트윗 삭제 중 오류가 발생했습니다:",
+            error.response.data
+          );
+          console.error("응답 상태 코드:", error.response.status);
+          console.error("응답 헤더:", error.response.headers);
+        } else if (error.request) {
+          // 요청이 만들어졌지만 서버가 응답하지 않은 경우
+          console.error("서버가 응답하지 않습니다:", error.request);
+        } else {
+          // 요청 설정 중 오류가 발생한 경우
+          console.error("요청 설정 중 오류가 발생했습니다:", error.message);
+        }
+      });
+  };
+
   return (
     <>
       <ProfileMainWrapper>
@@ -324,7 +402,8 @@ const ProfileMain = ({ setShowProfile }) => {
           <BackstepBtnBox>
             <BackstepBtn onClick={() => setShowProfile(false)} />
           </BackstepBtnBox>
-          <Nickname>이가은 </Nickname>
+
+          <Nickname>{profile.nickname} </Nickname>
         </Header>
         <BackgroundImg />
         <UserBox>
@@ -335,8 +414,8 @@ const ProfileMain = ({ setShowProfile }) => {
           <EditProfile>Edit Profile</EditProfile>
         </UserBox>
         <UserInfoBox>
-          <NickName>이가은</NickName>
-          <ID>@geun</ID>
+          <NickName>{profile.nickname}</NickName>
+          <ID>{profile.id}</ID>
           <Join>Joined May 2024</Join>
         </UserInfoBox>
         <Postbar>
@@ -350,41 +429,44 @@ const ProfileMain = ({ setShowProfile }) => {
           <Media>Media</Media>
           <Likes>Likes</Likes>
         </Postbar>
-        <TwitterBox>
-          <UserIconPost
-            src="https://www.tweetgen.com/c/default-pfp.png"
-            alt="usericon"
-          />
-          <NickAndPost>
-            <NickAndIDBox>
-              <Nicknamepost>이가은</Nicknamepost>
-              <IDpost>@gaeun - 8h</IDpost>
-              <MoreIcon />
-            </NickAndIDBox>
-            <Postpost>EFUB 토이 프로젝트 입니다. 화이팅!</Postpost>
-            <ShareBox>
-              <SocialBox>
-                <QuoteBox>
-                  <QuoteIcon />
-                  <QuoteNum>3.8k</QuoteNum>
-                </QuoteBox>
-                <RetweetBox>
-                  <RetweetIcon /> <RetweetNum>2.5k</RetweetNum>
-                </RetweetBox>
-                <LikeBox>
-                  <LikeIcon />
-                  <LikeNum>20k</LikeNum>
-                </LikeBox>
-                <StatsBox>
-                  <StatsIcon />
-                  <StatsNum>2.5k</StatsNum>
-                </StatsBox>
-                <SaveIcon />
-              </SocialBox>
-              <ShareIcon />
-            </ShareBox>
-          </NickAndPost>
-        </TwitterBox>
+        {tweets.map((tweet) => (
+          <TwitterBox key={tweet.tweetId}>
+            <UserIconPost
+              src="https://www.tweetgen.com/c/default-pfp.png"
+              alt="usericon"
+            />
+            <NickAndPost>
+              <NickAndIDBox>
+                <Nicknamepost>{tweet.nickname}</Nicknamepost>
+                <IDpost>{tweet.id}</IDpost>
+                <DeleteIcon onClick={() => handleDeleteTweet(tweet.tweetId)} />
+                <MoreIcon />
+              </NickAndIDBox>
+              <Postpost>{tweet.content}</Postpost>
+              <ShareBox>
+                <SocialBox>
+                  <QuoteBox>
+                    <QuoteIcon />
+                    <QuoteNum>3.8k</QuoteNum>
+                  </QuoteBox>
+                  <RetweetBox>
+                    <RetweetIcon /> <RetweetNum>2.5k</RetweetNum>
+                  </RetweetBox>
+                  <LikeBox>
+                    <LikeIcon />
+                    <LikeNum>20k</LikeNum>
+                  </LikeBox>
+                  <StatsBox>
+                    <StatsIcon />
+                    <StatsNum>2.5k</StatsNum>
+                  </StatsBox>
+                  <SaveIcon />
+                </SocialBox>
+                <ShareIcon />
+              </ShareBox>
+            </NickAndPost>
+          </TwitterBox>
+        ))}
       </ProfileMainWrapper>
     </>
   );

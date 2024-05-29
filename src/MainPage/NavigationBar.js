@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import styled, { css } from "styled-components";
 import { PiXLogo } from "react-icons/pi";
 import { GoHomeFill } from "react-icons/go";
@@ -299,6 +300,24 @@ const BottomMoreIcon = styled(IoIosMore)`
 `;
 
 const NavigationBar = ({ setShowDetail, setShowProfile }) => {
+  const [profile, setProfile] = useState({ nickname: "", id: "" });
+  useEffect(() => {
+    axios
+      .get("https://api.x-clone-coding.p-e.kr/members/1")
+      .then((response) => {
+        if (response.data) {
+          setProfile({
+            nickname: response.data.nickname,
+            id: response.data.id,
+          });
+        } else {
+          console.error("No profile data found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching the profile", error);
+      });
+  }, []);
   return (
     <MainComponent>
       <Xlogo />
@@ -362,8 +381,8 @@ const NavigationBar = ({ setShowDetail, setShowProfile }) => {
           alt="usericon"
         />
         <UserInfoBox>
-          <Nickname>이가은</Nickname>
-          <ID>@gaeun</ID>
+          <Nickname>{profile.nickname}</Nickname>
+          <ID>{profile.id}</ID>
         </UserInfoBox>
         <BottomMoreIcon />
       </UserBox>
