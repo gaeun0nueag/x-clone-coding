@@ -85,15 +85,8 @@ const ID = styled.div`
   padding-left: 10px;
 `;
 
-const DeleteIcon = styled(MdDeleteForever)`
-  margin-left: auto;
-  cursor: pointer;
-  font-size: 25px;
-  color: red;
-`;
-
 const BottomMoreIcon = styled(IoIosMore)`
-  margin-left: 10px;
+  margin-left: auto;
   margin-right: 20px;
   font-size: 25px;
   color: #73787d;
@@ -223,23 +216,6 @@ const PostDetail = ({ setShowDetail, tweetId, refreshTweets }) => {
     return <div>Loading...</div>;
   }
 
-  const deleteTweet = () => {
-    axios
-      .delete(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}`, {
-        data: { memberId: tweet.memberId },
-      })
-      .then(() => {
-        setShowDetail(false);
-        refreshTweets();
-      })
-      .catch((error) => {
-        console.error(
-          "Error deleting the tweet",
-          error.response ? error.response.data : error.message
-        );
-      });
-  };
-
   return (
     <>
       <PostDetailWrapper>
@@ -258,12 +234,7 @@ const PostDetail = ({ setShowDetail, tweetId, refreshTweets }) => {
             <Nickname>{tweet.nickname}</Nickname>
             <ID>{tweet.id}</ID>
           </UserInfoBox>
-          <DeleteIcon
-            onClick={(e) => {
-              e.stopPropagation();
-              deleteTweet(tweet.tweetId);
-            }}
-          />
+
           <BottomMoreIcon />
         </UserBox>
         <PostBox>
