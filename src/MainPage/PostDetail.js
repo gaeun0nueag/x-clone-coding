@@ -203,7 +203,7 @@ const PostDetail = ({ setShowDetail, tweetId, refreshTweets }) => {
 
   useEffect(() => {
     axios
-      .get(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}`)
+      .get(`${process.env.REACT_APP_SERVER_URL}/tweets/${tweetId}`)
       .then((response) => {
         setTweet(response.data);
       })

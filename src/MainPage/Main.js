@@ -269,7 +269,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
 
   const fetchTweets = () => {
     axios
-      .get("https://api.x-clone-coding.p-e.kr/tweets")
+      .get(`${process.env.REACT_APP_SERVER_URL}/tweets`)
       .then((response) => {
         setTweets(response.data.tweets.sort((a, b) => b.tweetId - a.tweetId));
       })
@@ -283,7 +283,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
 
   useEffect(() => {
     axios
-      .get("https://api.x-clone-coding.p-e.kr/tweets")
+      .get(`${process.env.REACT_APP_SERVER_URL}/tweets`)
       .then((response) => {
         const sortedTweets = response.data.tweets.sort(
           (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
@@ -301,7 +301,7 @@ const Main = ({ showDetail, setShowDetail, showProfile, setShowProfile }) => {
       content: newTweet,
     };
     axios
-      .post("https://api.x-clone-coding.p-e.kr/tweets", tweetData)
+      .post(`${process.env.REACT_APP_SERVER_URL}/tweets`, tweetData)
       .then((response) => {
         console.log("New tweet added:", response.data);
         setTweets([response.data, ...tweets]);

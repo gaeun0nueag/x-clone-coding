@@ -339,7 +339,7 @@ const ProfileMain = ({ setShowProfile, fetchTweets }) => {
 
   useEffect(() => {
     axios
-      .get("https://api.x-clone-coding.p-e.kr/members/1/tweets")
+      .get(`${process.env.REACT_APP_SERVER_URL}/members/1/tweets`)
       .then((response) => {
         if (response.data && response.data.memberTweetList) {
           const sortedTweets = response.data.memberTweetList.sort(
@@ -355,7 +355,7 @@ const ProfileMain = ({ setShowProfile, fetchTweets }) => {
       });
     // 프로필 정보 가져오기
     axios
-      .get("https://api.x-clone-coding.p-e.kr/members/1")
+      .get(`${process.env.REACT_APP_SERVER_URL}/members/1`)
       .then((response) => {
         if (response.data) {
           setProfile({
@@ -374,7 +374,9 @@ const ProfileMain = ({ setShowProfile, fetchTweets }) => {
   const handleDeleteTweet = (tweetId) => {
     axios
 
-      .delete(`https://api.x-clone-coding.p-e.kr/tweets/${tweetId}?memberId=1`)
+      .delete(
+        `${process.env.REACT_APP_SERVER_URL}/tweets/${tweetId}?memberId=1`
+      )
       .then((response) => {
         console.log("Tweet deleted:", response.data);
         setTweets((prevTweets) =>
